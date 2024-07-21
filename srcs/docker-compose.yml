@@ -1,0 +1,48 @@
+version: '3.0'
+
+services:
+  webserv:
+    build: ./nginx
+    container_name: ygaiffie-webserv
+    image: alpine:nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /opt/www:/var/www
+
+  mysql:
+    build: ./mariadb
+    container_name: ygaiffie-db
+    image: alpine:mariadb
+    volumes:
+      - /opt/mariadb:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    
+  redis:
+    build: ./redis
+    container_name: ygaiffie-redis
+    image: alpine:redis
+    ports:
+      - "6379:6379"
+
+  wordpress:
+    build: ./wp_php
+    container_name: ygaiffie-wp
+    image: alpine:wp_php
+    volumes:
+      - /opt/www:/www
+
+  ftp:
+    build: ./ftp
+    container_name: ygaiffier-ftp
+    image: alpine:ftp
+    volumes:
+      - /opt/www:/opt/www
+    ports:
+      - "21:21"
+    
+networks:
+  inception_bridge:
+    driver: bridge
