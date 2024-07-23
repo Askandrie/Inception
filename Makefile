@@ -58,6 +58,8 @@ stop:
 	@echo "\n\t[🛑 ] $(BRED)Arrêt de tous les conteneurs...$(NC)\n"
 	@docker ps -q | xargs -r docker stop
 	
+re: fclean all
+
 init:
 	@echo ""
 	@echo "\t\t$(BCYN)┍━━━━━━━»•» 🐳 «•«━┑$(NC)"

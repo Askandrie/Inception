@@ -1,5 +1,3 @@
-version: '3.0'
-
 services:
   webserv:
     build: ./nginx
@@ -8,8 +6,10 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - /opt/www:/var/www
+    #volumes:
+    #  - /opt/www:/var/www
+    networks:
+      - inception
 
   mysql:
     build: ./mariadb
@@ -19,6 +19,8 @@ services:
       - /opt/mariadb:/var/lib/mysql
     ports:
       - "3306:3306"
+    networks:
+      - inception
     
   redis:
     build: ./redis
@@ -26,6 +28,8 @@ services:
     image: alpine:redis
     ports:
       - "6379:6379"
+    networks:
+      - inception
 
   wordpress:
     build: ./wp_php
@@ -33,6 +37,8 @@ services:
     image: alpine:wp_php
     volumes:
       - /opt/www:/www
+    networks:
+      - inception
 
   ftp:
     build: ./ftp
@@ -42,7 +48,9 @@ services:
       - /opt/www:/opt/www
     ports:
       - "21:21"
+    networks:
+      - inception
     
 networks:
-  inception_bridge:
+  inception:
     driver: bridge
