@@ -53,12 +53,18 @@ fclean: stop clean
 	@echo "\n\t[🗑️ ] $(BRED)Suppression de toutes les images et conteneurs...$(NC)\n"
 	@docker container prune -f
 	@docker image prune -a -f
+	@docker volume prune -f
 
 stop:
 	@echo "\n\t[🛑 ] $(BRED)Arrêt de tous les conteneurs...$(NC)\n"
 	@docker ps -q | xargs -r docker stop
 	
 re: fclean all
+
+debug: 
+	@echo "\n\t[🐞 ] $(BRED)Installation des container de debug...$(NC)\n"
+	@docker volume create portainer_data
+	@docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
 
 init:
 	@echo ""

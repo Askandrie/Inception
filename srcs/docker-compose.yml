@@ -2,7 +2,6 @@ services:
   webserv:
     build: ./nginx
     container_name: ygaiffie-webserv
-    image: alpine:nginx
     ports:
       - "80:80"
       - "443:443"
@@ -14,7 +13,6 @@ services:
   mysql:
     build: ./mariadb
     container_name: ygaiffie-db
-    image: alpine:mariadb
     volumes:
       - /opt/mariadb:/var/lib/mysql
     ports:
@@ -25,7 +23,6 @@ services:
   redis:
     build: ./redis
     container_name: ygaiffie-redis
-    image: alpine:redis
     ports:
       - "6379:6379"
     networks:
@@ -34,16 +31,16 @@ services:
   wordpress:
     build: ./wp_php
     container_name: ygaiffie-wp
-    image: alpine:wp_php
+    ports:
+      - "9000:9000"
     volumes:
-      - /opt/www:/www
+      - /opt/www:/wordpress
     networks:
       - inception
 
   ftp:
     build: ./ftp
     container_name: ygaiffier-ftp
-    image: alpine:ftp
     volumes:
       - /opt/www:/opt/www
     ports:

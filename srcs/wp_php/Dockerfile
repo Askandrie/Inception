@@ -15,11 +15,13 @@ FROM alpine:latest
 RUN apk update && apk upgrade
 RUN apk add php83 php83-fpm php83-mysqli php83-json php83-session
 RUN apk add unzip
-RUN mkdir -p /www
-RUN cd /www && wget https://fr.wordpress.org/latest-fr_FR.zip
-RUN cd /www && unzip /www/latest-fr_FR.zip
-# RUN cd /www && rm latest-fr_FR.zip
 
-VOLUME /www
+RUN wget https://fr.wordpress.org/latest-fr_FR.zip
+RUN unzip latest-fr_FR.zip
+RUN rm latest-fr_FR.zip
+
+VOLUME /wordpress
+
+EXPOSE 9000
 
 CMD ["php-fpm83", "-F"]
