@@ -2,27 +2,28 @@ services:
   webserv:
     build: ./nginx
     container_name: ygaiffie-webserv
+    image: ygaiffie-webserv:local
     ports:
       - "80:80"
       - "443:443"
-    #volumes:
-    #  - /opt/www:/var/www
     networks:
       - inception
 
   mysql:
     build: ./mariadb
     container_name: ygaiffie-db
+    image: ygaiffie-mysql:local
     volumes:
       - /opt/mariadb:/var/lib/mysql
     ports:
       - "3306:3306"
     networks:
       - inception
-    
+
   redis:
     build: ./redis
     container_name: ygaiffie-redis
+    image: ygaiffie-redis:local
     ports:
       - "6379:6379"
     networks:
@@ -31,23 +32,25 @@ services:
   wordpress:
     build: ./wp_php
     container_name: ygaiffie-wp
+    image: ygaiffie-wordpress:local
     ports:
       - "9000:9000"
     volumes:
-      - /opt/www:/wordpress
+      - ./wp/:/wordpress
     networks:
       - inception
 
   ftp:
     build: ./ftp
-    container_name: ygaiffier-ftp
+    container_name: ygaiffie-ftp
+    image: ygaiffie-ftp:local
     volumes:
       - /opt/www:/opt/www
     ports:
       - "21:21"
     networks:
       - inception
-    
+
 networks:
   inception:
     driver: bridge

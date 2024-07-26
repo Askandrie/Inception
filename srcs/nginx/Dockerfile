@@ -14,7 +14,4 @@ FROM alpine:latest
 RUN apk update && apk upgrade
 RUN apk add nginx
 
-EXPOSE 80
-EXPOSE 443
-
 CMD ["nginx", "-g", "daemon off;"]
