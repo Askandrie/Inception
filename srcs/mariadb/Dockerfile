@@ -19,6 +19,9 @@ ENV WORDPRESS_DB_NAME=wordpress
 
 RUN apk update && apk upgrade
 RUN apk add --no-cache mariadb mariadb-client
+
+COPY ressources/init.sql /
+
 # RUN mkdir -p /run/mysqld /var/lib/mysql
 # RUN chown -R mysql:mysql /run/mysqld /var/lib/mysql
 RUN mariadb-install-db --user=mysql --datadir=/var/lib/mysql

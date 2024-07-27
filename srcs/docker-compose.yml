@@ -9,7 +9,7 @@ services:
     networks:
       - inception
 
-  mysql:
+  mariadb:
     build: ./mariadb
     container_name: ygaiffie-db
     image: ygaiffie-mysql:local
@@ -17,6 +17,8 @@ services:
       - /opt/mariadb:/var/lib/mysql
     ports:
       - "3306:3306"
+    env_file:
+      - ./mariadb/ressources/.env
     networks:
       - inception
 
