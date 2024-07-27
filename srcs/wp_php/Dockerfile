@@ -13,8 +13,8 @@
 FROM alpine:latest
 
 RUN apk update && apk upgrade
-RUN apk add php83 php83-common php83-cli php83-mbstring php83-bz2 php83-fpm php83-mysqli php83-json php83-session curl
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+RUN apk add php83 php83-common php83-phar php83-cli php83-mbstring php83-bz2 php83-fpm php83-mysqli php83-json php83-session
+RUN wget -O wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 RUN php wp-cli.phar
 RUN chmod +x wp-cli.phar
 RUN mv wp-cli.phar /usr/local/bin/wp

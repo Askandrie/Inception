@@ -51,6 +51,15 @@ services:
     networks:
       - inception
 
+  adminer:
+    build: ./adminer
+    container_name: ygaiffie-adminer
+    image: ygaiffie-adminer:local
+    ports:
+      - "8080:8080"
+    networks:
+      - inception
+
 networks:
   inception:
     driver: bridge

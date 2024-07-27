@@ -5,7 +5,7 @@
 #                                                     +:+ +:+         +:+      #
 #    By: ygaiffie <ygaiffie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/07/21 06:09:47 by ygaiffie          #+#    #+#              #
+#    Created: 2024/08/21 06:09:47 by ygaiffie          #+#    #+#              #
 #    Updated: 2024/07/21 06:21:24 by ygaiffie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
@@ -13,6 +13,13 @@
 FROM alpine:latest
 
 RUN apk update && apk upgrade
-RUN apk add php83 php83-fpm php83-mysqli php83-json php83-session curl
-RUN mkdir -p /opt/adminer
-RUN curl -O https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1.php /opt/adminer
+RUN apk add --no-cache php83 php83-mysqli php83-pdo php83-pdo_mysql php83-session php83-json php83-mbstring php83-iconv php83-simplexml php83-phar php83-openssl curl
+
+COPY ressources/adminer-4.8.1.php /var/www/adminer.php
+
+RUN adduser -D -g '' adminer
+USER adminer
+
+EXPOSE 8080
+
+CMD ["php", "-S", "0.0.0.0:8080", "-t", "/var/www", "/var/www/adminer.php"]

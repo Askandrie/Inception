@@ -17,12 +17,14 @@ ENV WORDPRESS_DB_USER=db_user
 ENV WORDPRESS_DB_PASSWORD=db_password
 ENV WORDPRESS_DB_NAME=wordpress
 
-RUN apk update && apk upgrade && \
-    apk add mariadb mariadb-client
-RUN mkdir -p /run/mysqld
-RUN mariadb-install-db --user=root --datadir=/var/lib/mysql
-RUN chown -R mysql:mysql /run/mysqld /var/lib/mysql
+RUN apk update && apk upgrade
+RUN apk add --no-cache mariadb mariadb-client
+# RUN mkdir -p /run/mysqld /var/lib/mysql
+# RUN chown -R mysql:mysql /run/mysqld /var/lib/mysql
+RUN mariadb-install-db --user=mysql --datadir=/var/lib/mysql
 
 VOLUME /var/lib/mysql
+
+EXPOSE 3306
 
 CMD ["/usr/bin/mariadbd", "--user=root", "--datadir=/var/lib/mysql"]
