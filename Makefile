@@ -49,13 +49,19 @@ clean:
 	@echo "\n\t[🗑️ ] $(BRED)Suppression des conteneurs ...$(NC)\n"
 	@docker compose -f $(COMPOSE_FILE) down
 
-fclean: stop clean
+fclean: 
 	@echo "\n\t[🗑️ ] $(BRED)Suppression de toutes les images et conteneurs...$(NC)\n"
+	@docker compose -f $(COMPOSE_FILE) down --rmi all --volumes --remove-orphans
 	@docker container prune -f
 	@docker image prune -a -f
 	@docker volume prune -f
+	@docker network prune -f
 
 stop:
+	@echo "\n\t[🛑 ] $(RED)Arrêt de tous les conteneurs...$(NC)\n"
+	@docker compose -f $(COMPOSE_FILE) stop
+
+stop_all:
 	@echo "\n\t[🛑 ] $(BRED)Arrêt de tous les conteneurs...$(NC)\n"
 	@docker ps -q | xargs -r docker stop
 	
@@ -65,6 +71,7 @@ debug:
 	@echo "\n\t[🐞 ] $(BRED)Installation des container de debug...$(NC)\n"
 	@docker volume create portainer_data
 	@docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+	@docker run -d --restart=always -p 3001:3001 -v uptime-kuma:/app/data --name uptime-kuma louislam/uptime-kuma:1
 
 init:
 	@echo ""

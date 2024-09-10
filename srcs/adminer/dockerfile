@@ -10,12 +10,12 @@
 #                                                                              #
 # **************************************************************************** #
 
-FROM alpine:latest
+FROM alpine:3
 
 RUN apk update && apk upgrade
 RUN apk add --no-cache php83 php83-mysqli php83-pdo php83-pdo_mysql php83-session php83-json php83-mbstring php83-iconv php83-simplexml php83-phar php83-openssl curl
 
-COPY ressources/adminer-4.8.1.php /var/www/adminer.php
+COPY adminer-4.8.1.php /var/www/adminer.php
 
 RUN adduser -D -g '' adminer
 USER adminer

@@ -10,15 +10,23 @@ services:
       - inception
 
   mariadb:
-    build: ./mariadb
+    build: 
+      context: ./mariadb
+      dockerfile: dockerfile
+      args:
+        - MARIADB_DATABASE_ARG=${MARIADB_DATABASE}
+        - MARIADB_USER_ARG=${MARIADB_USER}
+        - MARIADB_PASSWORD_ARG=${MARIADB_PASSWORD}
     container_name: ygaiffie-db
     image: ygaiffie-mysql:local
+    environment:
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
     volumes:
-      - /opt/mariadb:/var/lib/mysql
+      - /home/aska/Inception/vol/mariadb:/var/lib/mysql
     ports:
       - "3306:3306"
-    env_file:
-      - ./mariadb/ressources/.env
     networks:
       - inception
 
@@ -38,16 +46,24 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - ./wp/:/wordpress
+      - /home/aska/Inception/vol/wp/:/wordpress
     networks:
       - inception
 
   ftp:
-    build: ./ftp
+    build: 
+      context: ./ftp
+      dockerfile: dockerfile
+      args:
+        FTP_USER_ARG: ${FTP_USER}
+        FTP_USER_PASS_ARG: ${FTP_USER_PASS}
     container_name: ygaiffie-ftp
     image: ygaiffie-ftp:local
+    environment:
+      - FTP_USER=${FTP_USER}
+      - FTP_USER_PASS=${FTP_USER_PASS}
     volumes:
-      - /opt/www:/opt/www
+      - /home/aska/Inception/vol/www:/opt/www
     ports:
       - "21:21"
     networks:

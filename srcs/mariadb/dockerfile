@@ -5,22 +5,33 @@
 #                                                     +:+ +:+         +:+      #
 #    By: ygaiffie <ygaiffie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/07/21 05:48:34 by ygaiffie          #+#    #+#              #
-#    Updated: 2024/07/21 05:59:40 by ygaiffie         ###   ########.fr        #
+#    Created: 2024/07/19 23:21:21 by ygaiffie          #+#    #+#              #
+#    Updated: 2024/07/20 18:40:52 by ygaiffie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-FROM alpine:latest
+FROM alpine:3
 
-RUN apk update && apk add vsftpd
-RUN echo 'local_enable=YES' >> etc/vsftpd.conf && \
-    echo 'write_enable=YES' >> etc/vsftpd.conf && \
-    echo 'dirmessage_enable=YES' >> etc/vsftpd.conf && \
-    echo 'xferlog_enable=YES' >> etc/vsftpd.conf && \
-    echo 'connect_from_port_20=YES' >> etc/vsftpd.conf && \
-    echo 'listen=YES' >> etc/vsftpd.conf && \
-    echo 'listen_port=21' >> etc/vsftpd.conf
+ARG MARIADB_DATABASE_ARG
+ARG MARIADB_USER_ARG
+ARG MARIADB_PASSWORD_ARG
 
-EXPOSE 21
+ENV MARIADB_DATABASE=${MARIADB_DATABASE_ARG}
+ENV MARIADB_USER=${MARIADB_USER_ARG}
+ENV MARIADB_PASSWORD=${MARIADB_PASSWORD_ARG}
 
-CMD ["vsftpd", "/etc/vsftpd.conf"]
+RUN apk update && apk upgrade
+RUN apk add --no-cache mariadb mariadb-client
+
+COPY init.sql /
+COPY entrypoint.sh /
+
+RUN mkdir -p /run/mysqld /var/lib/mysql
+RUN chown -R mysql:mysql /run/mysqld 
+RUN chown -R mysql:mysql /var/lib/mysql
+
+VOLUME /var/lib/mysql
+
+EXPOSE 3306
+
+ENTRYPOINT [ "sh", "entrypoint.sh" ]
