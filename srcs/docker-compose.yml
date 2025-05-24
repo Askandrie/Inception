@@ -24,7 +24,7 @@ services:
       - MARIADB_USER=${MARIADB_USER}
       - MARIADB_PASSWORD=${MARIADB_PASSWORD}
     volumes:
-      - /home/aska/Inception/vol/mariadb:/var/lib/mysql
+      - ${PROJECT_ROOT}/vol/mariadb:/var/lib/mysql
     ports:
       - "3306:3306"
     networks:
@@ -46,7 +46,7 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - /home/aska/Inception/vol/wp/:/wordpress
+      - ${PROJECT_ROOT}/vol/wp/:/wordpress
     networks:
       - inception
 
@@ -63,7 +63,7 @@ services:
       - FTP_USER=${FTP_USER}
       - FTP_USER_PASS=${FTP_USER_PASS}
     volumes:
-      - /home/aska/Inception/vol/www:/opt/www
+      - ${PROJECT_ROOT}/vol/www:/opt/www
     ports:
       - "21:21"
     networks:

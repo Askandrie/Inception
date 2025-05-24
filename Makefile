@@ -29,7 +29,7 @@ BOLD			:=	\033[1m
 NC				:=	\033[0m
 
 COMPOSE_FILE	:= srcs/docker-compose.yml
-
+PROJECT_ROOT	:= /opt/inception
 
 all: init build up
 
@@ -37,13 +37,17 @@ build:
 	@echo "\n\t[🛠️ ] $(BHCYN)Construction des images Docker avec Docker Compose...$(NC)\n"
 	@docker compose -f $(COMPOSE_FILE) build
 
-up:
+up_fg:
+	@echo "\n\t[🚢 ] $(BGRN)Lancement des conteneurs avec Docker Compose...$(NC)\n"
+	@docker compose -f $(COMPOSE_FILE) up
+
+up_bg:
 	@echo "\n\t[🚢 ] $(BGRN)Lancement des conteneurs avec Docker Compose...$(NC)\n"
 	@docker compose -f $(COMPOSE_FILE) up -d
 
 logs:
 	@echo "\n\t[📜 ] $(BMAG)Affichage des logs des conteneurs...$(NC)\n"
-	@docker compose -f $(COMPOSE_FILE) logs -f
+	@docker compose -f $(COMPOSE_FILE) logs
 
 clean:
 	@echo "\n\t[🗑️ ] $(BRED)Suppression des conteneurs ...$(NC)\n"
@@ -56,6 +60,9 @@ fclean:
 	@docker image prune -a -f
 	@docker volume prune -f
 	@docker network prune -f
+
+wipe_db:
+	@rm -rf $(PROJECT_ROOT)/vol/mariadb/*
 
 stop:
 	@echo "\n\t[🛑 ] $(RED)Arrêt de tous les conteneurs...$(NC)\n"

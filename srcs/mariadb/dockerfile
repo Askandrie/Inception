@@ -12,23 +12,25 @@
 
 FROM alpine:3
 
-ARG MARIADB_DATABASE_ARG
-ARG MARIADB_USER_ARG
-ARG MARIADB_PASSWORD_ARG
+# SELECT User, Host FROM mysql.user;
 
-ENV MARIADB_DATABASE=${MARIADB_DATABASE_ARG}
-ENV MARIADB_USER=${MARIADB_USER_ARG}
-ENV MARIADB_PASSWORD=${MARIADB_PASSWORD_ARG}
+# ARG MARIADB_DATABASE_ARG
+# ARG MARIADB_USER_ARG
+# ARG MARIADB_PASSWORD_ARG
+
+# ENV MARIADB_DATABASE=${MARIADB_DATABASE_ARG}
+# ENV MARIADB_USER=${MARIADB_USER_ARG}
+# ENV MARIADB_PASSWORD=${MARIADB_PASSWORD_ARG}
 
 RUN apk update && apk upgrade
-RUN apk add --no-cache mariadb mariadb-client
+RUN apk add --no-cache mariadb mariadb-client bash
 
-COPY init.sql /
 COPY entrypoint.sh /
 
 RUN mkdir -p /run/mysqld /var/lib/mysql
 RUN chown -R mysql:mysql /run/mysqld 
 RUN chown -R mysql:mysql /var/lib/mysql
+RUN sed -i 's/^skip-networking/#skip-networking/' /etc/my.cnf.d/mariadb-server.cnf
 
 VOLUME /var/lib/mysql
 
