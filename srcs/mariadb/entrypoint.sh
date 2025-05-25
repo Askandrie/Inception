@@ -1,5 +1,5 @@
 #!/bin/sh
-set -ex
+set -e
 
 echo "MARIADB_DATABASE='$MARIADB_DATABASE'"
 echo "MARIADB_USER='$MARIADB_USER'"
@@ -9,10 +9,17 @@ chown -R mysql:mysql /var/lib/mysql
 
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "Initialisation de la base de données..."
-    mysql_install_db --user=mysql --datadir=/var/lib/mysql --rpm
+    mariadb-install-db --user=mysql --datadir=/var/lib/mysql --skip-test-db
 
-    mysqld --user=mysql --datadir=/var/lib/mysql --skip-networking --socket=/run/mysqld/mysqld.sock
+    mariadbd --user=mysql --datadir=/var/lib/mysql --skip-networking --socket=/run/mysqld/mysqld.sock &
     pid="$!"
+
+    for i in $(seq 1 30); do
+            if mariadb-admin --protocol=socket --socket=/run/mysqld/mysqld.sock ping --silent; then
+                break
+            fi
+            sleep 1
+        done
 
     echo "Commande SQL envoyée à mysql :"
     cat <<EOSQL
@@ -22,7 +29,7 @@ GRANT ALL PRIVILEGES ON ${MARIADB_DATABASE}.* TO '${MARIADB_USER}'@'%';
 FLUSH PRIVILEGES;
 EOSQL
 
-    mysql -u root --protocol=socket --socket=/run/mysqld/mysqld.sock <<EOSQL
+    mariadb -u root --protocol=socket --socket=/run/mysqld/mysqld.sock <<EOSQL
 CREATE DATABASE IF NOT EXISTS ${MARIADB_DATABASE};
 CREATE USER IF NOT EXISTS '${MARIADB_USER}'@'%' IDENTIFIED BY '${MARIADB_PASSWORD}';
 GRANT ALL PRIVILEGES ON ${MARIADB_DATABASE}.* TO '${MARIADB_USER}'@'%';
@@ -42,4 +49,4 @@ else
     echo "Base de données déjà initialisée, rien à faire."
 fi
 
-exec mysqld --user=mysql --datadir=/var/lib/mysql --port=3306
+exec mariadbd --user=mysql --datadir=/var/lib/mysql --port=3306

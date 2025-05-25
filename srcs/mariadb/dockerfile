@@ -10,17 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-FROM alpine:3
-
-# SELECT User, Host FROM mysql.user;
-
-# ARG MARIADB_DATABASE_ARG
-# ARG MARIADB_USER_ARG
-# ARG MARIADB_PASSWORD_ARG
-
-# ENV MARIADB_DATABASE=${MARIADB_DATABASE_ARG}
-# ENV MARIADB_USER=${MARIADB_USER_ARG}
-# ENV MARIADB_PASSWORD=${MARIADB_PASSWORD_ARG}
+FROM alpine:latest
 
 RUN apk update && apk upgrade
 RUN apk add --no-cache mariadb mariadb-client bash

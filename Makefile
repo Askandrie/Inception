@@ -31,7 +31,16 @@ NC				:=	\033[0m
 COMPOSE_FILE	:= srcs/docker-compose.yml
 PROJECT_ROOT	:= /opt/inception
 
-all: init build up
+all: init build up_bg
+
+reboot-%:
+	@echo "\n\t[🚢 ] $(BGRN)Relancement du conteneurs $*...$(NC)\n"
+	@docker restart $*
+
+rebuild-%:
+	@echo "\n\t[🛠️ ] $(BHCYN)Construction de l'images $*...$(NC)\n"
+	@docker compose -f $(COMPOSE_FILE) build $*
+	@docker compose -f $(COMPOSE_FILE) up -d $*
 
 build:
 	@echo "\n\t[🛠️ ] $(BHCYN)Construction des images Docker avec Docker Compose...$(NC)\n"
@@ -64,6 +73,9 @@ fclean:
 wipe_db:
 	@rm -rf $(PROJECT_ROOT)/vol/mariadb/*
 
+wipe_wp:
+	@rm -rf $(PROJECT_ROOT)/vol/wp/*
+
 stop:
 	@echo "\n\t[🛑 ] $(RED)Arrêt de tous les conteneurs...$(NC)\n"
 	@docker compose -f $(COMPOSE_FILE) stop
@@ -93,8 +105,8 @@ help: init
 	@echo "  make run       : Run the Docker container 🚢"
 	@echo "  make logs      : View the logs of the running container 📜"
 	@echo "  make stop      : Stop the Docker container 🛑"
-	@echo "  make rm        : Remove the Docker container 🗑️"
 	@echo "  make clean     : Remove the Docker image 🧹"
+	@echo "  make fclean        : Remove all the Docker compose elements 🗑️"
 	@echo "  make restart   : Rebuild and restart the Docker container 🔄"
 
 .PHONY: all clean fclean re stop help init logs

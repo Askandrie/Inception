@@ -1,8 +1,12 @@
 services:
   webserv:
     build: ./nginx
+    depends_on:
+      - wordpress
     container_name: ygaiffie-webserv
     image: ygaiffie-webserv:local
+    volumes:
+      - ${PROJECT_ROOT}/vol/wp/:/wordpress
     ports:
       - "80:80"
       - "443:443"
@@ -41,10 +45,21 @@ services:
 
   wordpress:
     build: ./wp_php
+    depends_on:
+      - mariadb
+      - redis
     container_name: ygaiffie-wp
     image: ygaiffie-wordpress:local
-    ports:
-      - "9000:9000"
+    environment:
+      - WORDPRESS_DB_HOST=mariadb
+      - WORDPRESS_DB_NAME=${MARIADB_DATABASE}
+      - WORDPRESS_DB_USER=${MARIADB_USER}
+      - WORDPRESS_DB_PASSWORD=${MARIADB_PASSWORD}
+      - WORDPRESS_URL=${WORDPRESS_URL}
+      - WORDPRESS_TITLE=${WORDPRESS_TITLE}
+      - WORDPRESS_ADMIN_USER=${WORDPRESS_ADMIN_USER}
+      - WORDPRESS_ADMIN_PASSWORD=${WORDPRESS_ADMIN_PASSWORD}
+      - WORDPRESS_ADMIN_EMAIL=${WORDPRESS_ADMIN_EMAIL}
     volumes:
       - ${PROJECT_ROOT}/vol/wp/:/wordpress
     networks:
@@ -63,9 +78,10 @@ services:
       - FTP_USER=${FTP_USER}
       - FTP_USER_PASS=${FTP_USER_PASS}
     volumes:
-      - ${PROJECT_ROOT}/vol/www:/opt/www
+      - ${PROJECT_ROOT}/vol/wp:/ftp
     ports:
       - "21:21"
+      - "22000-22010:22000-22010"
     networks:
       - inception
 

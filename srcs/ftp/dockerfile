@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-FROM alpine:3
+FROM alpine:latest
 
 ARG FTP_USER_ARG
 ARG FTP_USER_PASS_ARG
@@ -22,7 +22,6 @@ RUN apk update && apk add vsftpd
 COPY vsftpd.conf /etc/vsftpd.conf
 RUN adduser -D -h /ftp/ -s /sbin/nologin ${FTP_USER}
 RUN echo "${FTP_USER}:${FTP_USER_PASS}" | chpasswd  
-RUN mkdir -p /ftp/
 RUN chown ${FTP_USER}:${FTP_USER} /ftp/
 
 EXPOSE 20 21
