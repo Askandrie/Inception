@@ -71,10 +71,10 @@ fclean:
 	@docker network prune -f
 
 wipe_db:
-	@rm -rf $(PROJECT_ROOT)/vol/mariadb/*
+	@rm -rf $(PROJECT_ROOT)/data/mariadb/*
 
 wipe_wp:
-	@rm -rf $(PROJECT_ROOT)/vol/wp/*
+	@rm -rf $(PROJECT_ROOT)/data/wp/*
 
 stop:
 	@echo "\n\t[🛑 ] $(RED)Arrêt de tous les conteneurs...$(NC)\n"

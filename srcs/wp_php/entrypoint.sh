@@ -37,12 +37,17 @@ if ! wp core is-installed --allow-root; then
         --admin_password="$WORDPRESS_ADMIN_PASSWORD" \
         --admin_email="$WORDPRESS_ADMIN_EMAIL"
 
-    wp plugin install redis-cache --activate --allow-root
+    wp plugin install redis-cache speedycache --activate --allow-root
     sed -i "/^\/\* That's all, stop editing! Happy publishing. \*\//i\
         define('WP_REDIS_HOST', 'ygaiffie-redis');\
         define('WP_REDIS_PORT', 6379);\
         define('WP_REDIS_DATABASE', 0);" /wordpress/wp-config.php
+    wp plugin update --all --allow-root
     wp redis enable --allow-root
+    wp theme install twentytwentyfour --activate --allow-root
+    wp theme list --status=inactive --field=name --allow-root | xargs -r wp theme delete --allow-root
+    wp plugin delete hello --allow-root || true
+    wp plugin activate akismet --allow-root || true
 fi
 
 chown -R 100:101 /wordpress

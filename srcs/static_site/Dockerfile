@@ -5,33 +5,18 @@
 #                                                     +:+ +:+         +:+      #
 #    By: ygaiffie <ygaiffie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/08/21 06:09:47 by ygaiffie          #+#    #+#              #
-#    Updated: 2024/07/21 06:21:24 by ygaiffie         ###   ########.fr        #
+#    Created: 2024/07/19 23:36:49 by ygaiffie          #+#    #+#              #
+#    Updated: 2024/07/21 06:15:19 by ygaiffie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FROM alpine:3
 
-RUN adduser -D -g '' adminer && \
-    apk update && \
-    apk upgrade && \
-    apk add --no-cache \
-    php83 \
-    php83-mysqli \
-    php83-pdo \
-    php83-pdo_mysql \
-    php83-session \
-    php83-json \
-    php83-mbstring \
-    php83-iconv \
-    php83-simplexml \
-    php83-phar \
-    php83-openssl \
-    curl \
+RUN apk update && apk upgrade && apk add --no-cache nginx && \
     rm -rf /tmp/* /var/tmp/* /usr/share/man/* /usr/share/doc/*
 
-COPY adminer-4.8.1.php /var/www/adminer.php
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY index.html /opt
+COPY style.css /opt
 
-USER adminer
-
-CMD ["php", "-S", "0.0.0.0:8080", "-t", "/var/www", "/var/www/adminer.php"]
+CMD ["nginx", "-g", "daemon off;"]

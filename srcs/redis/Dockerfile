@@ -10,14 +10,13 @@
 #                                                                              #
 # **************************************************************************** #
 
-FROM alpine:latest
+FROM alpine:3
 
 ENV REDIS_PORT=6379
 
-RUN apk update && apk upgrade
-RUN apk add redis
-
-#COPY redis.conf /etc/redis.conf
+RUN apk update && apk upgrade \
+    && apk add --no-cache redis \
+    && rm -rf /tmp/* /var/tmp/* /usr/share/man/* /usr/share/doc/*
 
 EXPOSE $REDIS_PORT
 

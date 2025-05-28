@@ -10,20 +10,18 @@
 #                                                                              #
 # **************************************************************************** #
 
-FROM alpine:latest
+FROM alpine:3
 
-RUN apk update && apk upgrade
-RUN apk add --no-cache mariadb mariadb-client bash
+RUN apk update && apk upgrade \
+    && apk add --no-cache mariadb mariadb-client bash \
+    && mkdir -p /run/mysqld /var/lib/mysql \
+    && chown -R mysql:mysql /run/mysqld /var/lib/mysql \
+    && sed -i 's/^skip-networking/#skip-networking/' /etc/my.cnf.d/mariadb-server.cnf \
+    && rm -rf /tmp/* /var/tmp/* /usr/share/man/* /usr/share/doc/*
 
 COPY entrypoint.sh /
 
-RUN mkdir -p /run/mysqld /var/lib/mysql
-RUN chown -R mysql:mysql /run/mysqld 
-RUN chown -R mysql:mysql /var/lib/mysql
-RUN sed -i 's/^skip-networking/#skip-networking/' /etc/my.cnf.d/mariadb-server.cnf
-
 VOLUME /var/lib/mysql
-
 EXPOSE 3306
 
 ENTRYPOINT [ "sh", "entrypoint.sh" ]

@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-FROM alpine:latest
+FROM alpine:3
 
 ARG FTP_USER_ARG
 ARG FTP_USER_PASS_ARG
@@ -18,11 +18,14 @@ ARG FTP_USER_PASS_ARG
 ENV FTP_USER=${FTP_USER_ARG}
 ENV FTP_USER_PASS=${FTP_USER_PASS_ARG}
 
-RUN apk update && apk add vsftpd
+RUN apk update && apk add --no-cache vsftpd && \
+    adduser -D -h /ftp/ -s /sbin/nologin "${FTP_USER}" && \
+    echo "${FTP_USER}:${FTP_USER_PASS}" | chpasswd && \
+    mkdir -p /ftp && \
+    chown ${FTP_USER}:${FTP_USER} /ftp && \
+    rm -rf /var/tmp/* /usr/share/man/* /usr/share/doc/*
+
 COPY vsftpd.conf /etc/vsftpd.conf
-RUN adduser -D -h /ftp/ -s /sbin/nologin ${FTP_USER}
-RUN echo "${FTP_USER}:${FTP_USER_PASS}" | chpasswd  
-RUN chown ${FTP_USER}:${FTP_USER} /ftp/
 
 EXPOSE 20 21
 

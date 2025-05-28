@@ -6,31 +6,42 @@ services:
     container_name: ygaiffie-webserv
     image: ygaiffie-webserv:local
     volumes:
-      - ${PROJECT_ROOT}/vol/wp/:/wordpress
+      - ${PROJECT_ROOT}/data/wp/:/wordpress
     ports:
-      - "80:80"
       - "443:443"
     networks:
       - inception
+
+  static_site:
+    build: ./static_site
+    container_name: ygaiffie-static
+    image: ygaiffie-static:local
+    ports:
+      - "80:80"
+    networks:
+      - inception
+
 
   mariadb:
     build: 
       context: ./mariadb
       dockerfile: dockerfile
       args:
-        - MARIADB_DATABASE_ARG=${MARIADB_DATABASE}
-        - MARIADB_USER_ARG=${MARIADB_USER}
-        - MARIADB_PASSWORD_ARG=${MARIADB_PASSWORD}
+        - MARIADB_DATABASE=${MARIADB_DATABASE}
+        - MARIADB_WP_USER=${MARIADB_WP_USER}
+        - MARIADB_WP_PASSWORD=${MARIADB_WP_PASSWORD}
+        - MARIADB_ADMIN_USER=${MARIADB_ADMIN_USER}
+        - MARIADB_ADMIN_PASSWORD=${MARIADB_ADMIN_PASSWORD}
     container_name: ygaiffie-db
     image: ygaiffie-mysql:local
     environment:
       - MARIADB_DATABASE=${MARIADB_DATABASE}
-      - MARIADB_USER=${MARIADB_USER}
-      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+      - MARIADB_WP_USER=${MARIADB_WP_USER}
+      - MARIADB_WP_PASSWORD=${MARIADB_WP_PASSWORD}
+      - MARIADB_ADMIN_USER=${MARIADB_ADMIN_USER}
+      - MARIADB_ADMIN_PASSWORD=${MARIADB_ADMIN_PASSWORD}
     volumes:
-      - ${PROJECT_ROOT}/vol/mariadb:/var/lib/mysql
-    ports:
-      - "3306:3306"
+      - ${PROJECT_ROOT}/data/mariadb:/var/lib/mysql
     networks:
       - inception
 
@@ -38,8 +49,6 @@ services:
     build: ./redis
     container_name: ygaiffie-redis
     image: ygaiffie-redis:local
-    ports:
-      - "6379:6379"
     networks:
       - inception
 
@@ -53,15 +62,15 @@ services:
     environment:
       - WORDPRESS_DB_HOST=mariadb
       - WORDPRESS_DB_NAME=${MARIADB_DATABASE}
-      - WORDPRESS_DB_USER=${MARIADB_USER}
-      - WORDPRESS_DB_PASSWORD=${MARIADB_PASSWORD}
+      - WORDPRESS_DB_USER=${MARIADB_WP_USER}
+      - WORDPRESS_DB_PASSWORD=${MARIADB_WP_PASSWORD}
       - WORDPRESS_URL=${WORDPRESS_URL}
       - WORDPRESS_TITLE=${WORDPRESS_TITLE}
       - WORDPRESS_ADMIN_USER=${WORDPRESS_ADMIN_USER}
       - WORDPRESS_ADMIN_PASSWORD=${WORDPRESS_ADMIN_PASSWORD}
       - WORDPRESS_ADMIN_EMAIL=${WORDPRESS_ADMIN_EMAIL}
     volumes:
-      - ${PROJECT_ROOT}/vol/wp/:/wordpress
+      - ${PROJECT_ROOT}/data/wp/:/wordpress
     networks:
       - inception
 
@@ -78,7 +87,7 @@ services:
       - FTP_USER=${FTP_USER}
       - FTP_USER_PASS=${FTP_USER_PASS}
     volumes:
-      - ${PROJECT_ROOT}/vol/wp:/ftp
+      - ${PROJECT_ROOT}/data/wp:/ftp
     ports:
       - "21:21"
       - "22000-22010:22000-22010"
